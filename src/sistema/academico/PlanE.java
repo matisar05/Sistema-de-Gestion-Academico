@@ -1,0 +1,27 @@
+public class PlanE implements PlanState {
+
+    @Override
+    public boolean puedeCursar(Alumno alumno, Materia materia) {
+        boolean cumpleCorrelativas = materia.getCorrelativas().stream()
+                .allMatch(alumno::aproboFinalDe);
+
+        if (!cumpleCorrelativas) {
+            return false;
+        }
+
+        return aproboFinalesPrevios(alumno, materia, 3);
+    }
+
+    private boolean aproboFinalesPrevios(Alumno alumno, Materia materia, int cuatrimestres) {
+        int actual = materia.getCuatrimestre();
+        return alumno.getMaterias().stream()
+                .filter(am -> am.getCuatrimestreCursado() >= actual - cuatrimestres
+                        && am.getCuatrimestreCursado() < actual)
+                .allMatch(AlumnoMateria::estaAprobada);
+    }
+
+    @Override
+    public String getNombre() {
+        return "Plan E";
+    }
+}
